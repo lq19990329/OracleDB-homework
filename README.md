@@ -1,8 +1,10 @@
 # OracleDB-homework
 Oracle数据库的作业B/S端
 ## 使用
-```npm install
-   node app.js```
+```
+   npm install
+   node app.js
+   ```
 ## 前端使用
 ### bootstrap实现数据表格化呈现
 ### ajax请求实现数据交互及页面内组件的切换
