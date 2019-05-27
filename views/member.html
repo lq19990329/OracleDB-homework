@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-table.min.css">
+    
+    
+    <title>药品管理系统</title>
+    <style>
+        .content{
+            text-align: center;
+            width: 100px;
+            
+        }
+        .content p{
+            display: inline-block;
+            width: 60px;
+            font-size: 15px;
+            text-align: left;
+            word-wrap: break-word; 
+            word-break: normal;
+        }
+    </style>
+</head>
+<body>
+    <table id="tab" border='1' class="table table-hover table-bordered"  >
+        
+        
+       
+    </table>
+    <table class="table table-hover table-bordered">
+        <tr>
+            <td><input type="text" class="form-control" placeholder="会员编号" name="id"></td>
+            <td><input type="text" class="form-control" placeholder="会员姓名" name="name"></td>
+            <td><input type="text" class="form-control" placeholder="联系方式" name="tel"></td>
+            <td><input type="text" class="form-control" placeholder="积分" name="job"></td>
+            <td style="width:200px ;text-align: center;vertical-align: center"><button type="button" id="insert" class=" btn btn-primary  btn-sm" >添加</button></td>
+        </tr>
+    </table>
+<script src="/js/jquery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/bootstrap-table.min.js"></script>
+<script>
+    window.operateEvents = {
+            'click .RoleOfdelete': function (e, value, row, index) {
+            $.ajax({
+                url:'/delMem',
+                method:'get',
+                data:{
+                    id: row.id
+                }
+
+
+            }).done(function(){
+                window.location.reload();
+            })
+         },
+            'click .RoleOfedit': function (e, value, row, index) {
+            
+                let  arr=[];
+                let arr1=[];
+            for(attr in row){
+                console.log(attr,row[attr])
+                arr.push(row[attr])
+                console.log(arr)
+            }
+            for(let i=0;i<$(this).parent().siblings().length;i++){
+                arr1.push($(this).parent().siblings()[i].innerHTML)
+                console.log(arr1)
+            }
+            if(arr.toString()==arr1.toString()){
+                alert('未修改任何内容')
+            }
+            else{
+                $.ajax({
+                url:'/updMem',
+                method:'get',
+                data:{
+                    id:arr1[0],
+                    name:arr1[1],
+                    tel:arr1[2],
+                    job:arr1[3],
+                }
+
+            }).done(function(data){
+                console.log(data)
+                console.log(1)
+                window.location.reload();
+            })
+            }
+
+            }
+    };
+    function operateFormatter (value, row, index){
+            return [
+      '<button type="button" class="RoleOfdelete btn btn-primary  btn-sm" style="margin-right:15px;">删除</button>',
+
+      '<button type="button" class="RoleOfedit btn btn-primary  btn-sm" style="margin-right:15px;">修改</button>'
+      ].join('');
+        }
+       $('#tab').bootstrapTable({
+           type:'get',
+           url:'/getMem',
+            columns:[
+                {
+                    field:'id',
+                    title:'会员编号'
+                },
+                {
+                    field:'name',
+                    title:'会员姓名'
+                },
+                {
+                    field:'tel',
+                    title:'联系方式'
+                },
+                {
+                    field:'score',
+                    title:'积分'
+                },
+                {
+                 field: 'operate',
+                 title: '操作',
+                 width:200,
+                 align: 'center',
+                    valign: 'middle',
+                 formatter: operateFormatter ,
+                 events:operateEvents
+             },
+            ],
+            pagination: true,
+            pageNumber: 1,                      
+            pageSize: 8,
+            search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            strictSearch: false,                 //是否显示所有的列
+            showRefresh: true,  
+            sidePagination: "client",
+            showToggle:true,
+            sortable: true,                    
+                sortOrder: "asc",
+            
+            
+        })
+        $('#insert').on('click',function(){
+            console.log($(" input[ name='id' ] ").val())
+            $.ajax({
+                url:'/insMem',
+                method:'get',
+                data:{
+                    id:$(" input[ name='id' ] ").val(),
+                    name:$(" input[ name='name' ] ").val(),
+                    tel:$(" input[ name='tel' ] ").val(),
+                    job:$(" input[ name='job' ] ").val(),
+                }
+
+            }).done(function(data){
+                window.location.reload();
+            })
+        })
+       
+       
+        
+        
+   
+   
+</script>    
+</body>
+
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>药店管理系统</title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <style>
+        html{
+            height: 100%;
+        }
+        body{
+            height: 100%;
+            padding-left: 200px;
+            overflow: hidden;
+            
+        }
+        .lq_menu{
+            position:fixed;
+            left: 0;
+            height: 100%;
+            width: 200px;
+            background: rgba(46, 125, 255, 0.9);
+        }
+        .lq_menu_ul{
+            width: 100%;
+            margin-top: 50px;
+        }
+       
+        .lq_menu_li{
+            transition: all 0.2s ease 0.05s; 
+            color: white;         
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            font-weight: bolder; 
+            border-radius: 50px;
+            margin-bottom: 10px;         
+        }
+        .lq_menu_li:hover{
+            background: rgba(46, 125, 255, 0.9);
+            color: white;
+            cursor: pointer;
+        } 
+        .lq_menu_active{
+            background: white;
+            color: rgb(46, 125, 255)
+        }
+        .lq_menu_active:hover{
+            background: white;
+            color: rgb(46, 125, 255)
+        }
+        .lq_header{
+            
+            height: 150px;
+            background: black;
+            overflow: hidden;
+            font-size: 30px;
+            color: white;
+            text-align: center;
+            vertical-align: center; 
+            line-height: 150px;
+            
+        }
+        .lq_content{
+           height: calc(100% - 150px);
+           overflow: scroll;
+           padding: 0 0 0 80px ;
+        }
+        .lq_name{
+            padding-left: 30px;
+            color: white
+        }
+        .lq_name button:hover{
+            background: rgba(46, 125, 255, 0.9);
+            color: white;
+            cursor: pointer; 
+        }
+    </style>
+</head>
+<body>
+    <div class="lq_menu">
+        <div class="lq_name"> 
+            <h4>
+                <p>姓名:</p>
+                <p class="lq_user"></p>
+                <p>职位:</p>
+                <p class="lq_job"></p>
+                
+            </h4>
+            <button class="button_logout">登出</button>
+        </div>
+       
+        
+        <ul class="lq_menu_ul">
+            <li class="lq_menu_li lq_menu_li_emp lq_menu_active" name='emp'>人员</li>
+            <li class="lq_menu_li lq_menu_li_store" name='store'>店铺</li>
+            <li class="lq_menu_li" name='list'>订单</li>
+            <li class="lq_menu_li" name='medicine'>药品</li>
+            <li class="lq_menu_li" name='member'>会员 </li>
+
+        </ul>
+    </div>
+    <div class="lq_header">
+       药品管理系统
+        
+    </div>
+    <div class="lq_content">
+        <div class="mainbox"></div>
+    </div>
+    
+<script src="/js/jquery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script>
+    $.ajax({
+        url:'/api/user',
+        method:'get',
+        dataType:'json'
+        }).done(function(data){
+            $('.lq_user').html(data.user)
+            $('.lq_job').html(data.job)
+            if(data.job=='店员'){
+                $('.lq_menu_li_emp').css({'display':'none'})
+                $('.lq_menu_li_store').css({'display':'none'})
+            }
+            if(data.job=='店长'){
+                $('.lq_menu_li_store').css({'display':'none'})
+            }
+        })
+  $('.button_logout').on('click',function(){
+      $.ajax({
+        url:'/api/logout',
+        method:'get',
+        dataType:'json'
+      }).done(function(){
+          window.location.href='/login'
+      })
+  })
+function turnpage(url) {
+	var url0 = document.URL;
+	var num = url0.indexOf('?');
+	var oldurl;
+	if(num == -1) {
+		oldurl = url0;
+	} else {
+		oldurl = url0.slice(0, num);
+	}
+	var newurl = oldurl + '?' + url;
+	history.pushState(null, null, newurl);
+	var ajaxurl = url 
+	$.ajax({
+		type: "get",
+		url: ajaxurl,
+		success: function(html) {
+			$('.mainbox').html(html);
+		}
+	});
+}
+turnpage('emp')
+    
+	
+$('.lq_menu_ul').on('click','.lq_menu_li',function(ev){
+        console.log(ev)
+        console.log(this)
+        $(this).addClass('lq_menu_active');
+        $(this).siblings().removeClass('lq_menu_active')
+       turnpage($(this).attr('name'))
+    })
+</script>    
+</body>
+</html>
